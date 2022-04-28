@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// TODO: 天気クラスを作成
 // TODO: 現在の天気情報を表示
 // TODO: 1時間ごとの天気を表示
 // TODO: 日毎の天気を表示
