@@ -16,6 +16,7 @@ class _TopPageState extends State<TopPage> {
     temperatureMaximum: 18,
     temperatureMinimum: 14,
   );
+
   List<Weather> houryWeather = [
     Weather(
       temperature: 20,
@@ -163,6 +164,86 @@ class _TopPageState extends State<TopPage> {
     ),
   ];
 
+  List<Weather> dailyWeather = [
+    Weather(
+        temperatureMaximum: 20,
+        temperatureMinimum: 12,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 1)),
+    Weather(
+        temperatureMaximum: 22,
+        temperatureMinimum: 14,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 2)),
+    Weather(
+        temperatureMaximum: 21,
+        temperatureMinimum: 10,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 3)),
+    Weather(
+        temperatureMaximum: 20,
+        temperatureMinimum: 12,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 4)),
+    Weather(
+        temperatureMaximum: 22,
+        temperatureMinimum: 14,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 5)),
+    Weather(
+        temperatureMaximum: 21,
+        temperatureMinimum: 10,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 6)),
+    Weather(
+        temperatureMaximum: 20,
+        temperatureMinimum: 12,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 7)),
+    Weather(
+        temperatureMaximum: 22,
+        temperatureMinimum: 14,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 8)),
+    Weather(
+        temperatureMaximum: 21,
+        temperatureMinimum: 10,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 9)),
+    Weather(
+        temperatureMaximum: 20,
+        temperatureMinimum: 12,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 10)),
+    Weather(
+        temperatureMaximum: 22,
+        temperatureMinimum: 14,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 11)),
+    Weather(
+        temperatureMaximum: 21,
+        temperatureMinimum: 10,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 12)),
+    Weather(
+        temperatureMaximum: 20,
+        temperatureMinimum: 12,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 13)),
+    Weather(
+        temperatureMaximum: 22,
+        temperatureMinimum: 14,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 14)),
+    Weather(
+        temperatureMaximum: 21,
+        temperatureMinimum: 10,
+        rainyPercentage: 0,
+        time: DateTime(2021, 10, 15)),
+  ];
+
+  List<String> weekDay = ['月', '火', '水', '木', '金', '土', '日'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -236,6 +317,58 @@ class _TopPageState extends State<TopPage> {
             ),
             const Divider(
               height: 0,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: dailyWeather.map((weather) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              child: Text(
+                                  '${weekDay[weather.time!.weekday - 1]}曜日'),
+                              width: 50,
+                            ),
+                            Row(
+                              children: [
+                                const Icon(Icons.wb_sunny_sharp),
+                                Text(
+                                  '${weather.rainyPercentage}%',
+                                  style:
+                                      const TextStyle(color: Colors.lightBlue),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 50,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('${weather.temperatureMaximum}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      )),
+                                  Text('${weather.temperatureMinimum}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black.withOpacity(0.4),
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
           ],
         ),
