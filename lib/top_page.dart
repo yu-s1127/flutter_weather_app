@@ -16,84 +16,7 @@ class _TopPageState extends State<TopPage> {
   String? errorMessage;
 
   List<Weather>? hourlyWeather;
-
-  List<Weather> dailyWeather = [
-    Weather(
-        temperatureMaximum: 20,
-        temperatureMinimum: 12,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 1)),
-    Weather(
-        temperatureMaximum: 22,
-        temperatureMinimum: 14,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 2)),
-    Weather(
-        temperatureMaximum: 21,
-        temperatureMinimum: 10,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 3)),
-    Weather(
-        temperatureMaximum: 20,
-        temperatureMinimum: 12,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 4)),
-    Weather(
-        temperatureMaximum: 22,
-        temperatureMinimum: 14,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 5)),
-    Weather(
-        temperatureMaximum: 21,
-        temperatureMinimum: 10,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 6)),
-    Weather(
-        temperatureMaximum: 20,
-        temperatureMinimum: 12,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 7)),
-    Weather(
-        temperatureMaximum: 22,
-        temperatureMinimum: 14,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 8)),
-    Weather(
-        temperatureMaximum: 21,
-        temperatureMinimum: 10,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 9)),
-    Weather(
-        temperatureMaximum: 20,
-        temperatureMinimum: 12,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 10)),
-    Weather(
-        temperatureMaximum: 22,
-        temperatureMinimum: 14,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 11)),
-    Weather(
-        temperatureMaximum: 21,
-        temperatureMinimum: 10,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 12)),
-    Weather(
-        temperatureMaximum: 20,
-        temperatureMinimum: 12,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 13)),
-    Weather(
-        temperatureMaximum: 22,
-        temperatureMinimum: 14,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 14)),
-    Weather(
-        temperatureMaximum: 21,
-        temperatureMinimum: 10,
-        rainyPercentage: 0,
-        time: DateTime(2021, 10, 15)),
-  ];
+  List<Weather>? dailyWeather;
 
   List<String> weekDay = ['月', '火', '水', '木', '金', '土', '日'];
 
@@ -112,9 +35,14 @@ class _TopPageState extends State<TopPage> {
                   if (response.containsKey('address')) {
                     address = response['address'].toString();
                     currentWeather = await Weather.getCurrentWeather(value);
-                    hourlyWeather = await Weather.getHourlyWeather(
-                        lon: currentWeather!.longitude,
-                        lat: currentWeather!.latitude);
+                    Map<String, List<Weather>>? weatherForecast =
+                        await Weather.getForecast(
+                            lon: currentWeather!.longitude,
+                            lat: currentWeather!.latitude);
+                    if (weatherForecast != null) {
+                      hourlyWeather = weatherForecast['hourly'];
+                      dailyWeather = weatherForecast['daily'];
+                    }
                   }
 
                   setState(() {
@@ -214,54 +142,66 @@ class _TopPageState extends State<TopPage> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  children: dailyWeather.map((weather) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: SizedBox(
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              child: Text(
-                                  '${weekDay[weather.time!.weekday - 1]}曜日'),
-                              width: 50,
-                            ),
-                            Row(
-                              children: [
-                                const Icon(Icons.wb_sunny_sharp),
-                                Text(
-                                  '${weather.rainyPercentage}%',
-                                  style:
-                                      const TextStyle(color: Colors.lightBlue),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 50,
+                child: dailyWeather == null
+                    ? Container()
+                    : Column(
+                        children: dailyWeather!.map((weather) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: SizedBox(
+                              height: 50,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('${weather.temperatureMaximum}°',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                      )),
-                                  Text('${weather.temperatureMinimum}°',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black.withOpacity(0.4),
-                                      )),
+                                  SizedBox(
+                                    child: Text(
+                                        '${weekDay[weather.time!.weekday - 1]}曜日'),
+                                    width: 50,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 35,
+                                      ),
+                                      Image.network(
+                                          'https://openweathermap.org/img/wn/${weather.icon}.png'),
+                                      SizedBox(
+                                        width: 35,
+                                        child: Text(
+                                          '${weather.rainyPercentage != null ? weather.rainyPercentage!.ceil() : ""}%',
+                                          style: const TextStyle(
+                                              color: Colors.lightBlue),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    width: 50,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('${weather.temperatureMaximum}°',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                            )),
+                                        Text('${weather.temperatureMinimum}°',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color:
+                                                  Colors.black.withOpacity(0.4),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }).toList(),
-                ),
               ),
             ),
           ],
