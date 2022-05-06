@@ -260,6 +260,7 @@ class _TopPageState extends State<TopPage> {
                 onSubmitted: (value) async {
                   Map<String, String> response =
                       await ZipCode.searchAddressFromZipCode(value);
+                  await Weather.getCurrentWeather(value);
                   setState(() {
                     errorMessage = response['message'];
                     if (response.containsKey('address')) {
@@ -361,7 +362,7 @@ class _TopPageState extends State<TopPage> {
                             SizedBox(
                               child: Text(
                                   '${weekDay[weather.time!.weekday - 1]}曜日'),
-                              width: 50,
+                              width: 100,
                             ),
                             Row(
                               children: [
@@ -374,7 +375,7 @@ class _TopPageState extends State<TopPage> {
                               ],
                             ),
                             SizedBox(
-                              width: 50,
+                              width: 100,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
