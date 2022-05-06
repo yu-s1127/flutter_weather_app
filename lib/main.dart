@@ -21,9 +21,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// TODO: 現在の天気情報をdartで取得
-// TODO: 取得した情報から現在の天気情報を表示
-// TODO: 1時間ごとの天気を表示
 // TODO: 取得した情報から1時間ごとの天気を表示
 // TODO: 日毎の天気情報を取得
 // TODO: 取得した情報から日毎の天気情報を表示

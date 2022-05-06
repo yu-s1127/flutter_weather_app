@@ -11,17 +11,11 @@ class TopPage extends StatefulWidget {
 }
 
 class _TopPageState extends State<TopPage> {
-  Weather currentWeather = Weather(
-    temperature: 15,
-    description: '晴れ',
-    temperatureMaximum: 18,
-    temperatureMinimum: 14,
-  );
-
+  Weather? currentWeather;
   String address = 'ー';
   String? errorMessage;
 
-  List<Weather> houryWeather = [
+  List<Weather> hourlyWeather = [
     Weather(
       temperature: 20,
       description: '晴れ',
@@ -260,12 +254,16 @@ class _TopPageState extends State<TopPage> {
                 onSubmitted: (value) async {
                   Map<String, String> response =
                       await ZipCode.searchAddressFromZipCode(value);
-                  await Weather.getCurrentWeather(value);
+                  if (response.containsKey('address')) {
+                    address = response['address'].toString();
+                    currentWeather = await Weather.getCurrentWeather(value);
+                    await Weather.getHourlyWeather(
+                        lon: currentWeather!.longitude,
+                        lat: currentWeather!.latitude);
+                  }
+
                   setState(() {
                     errorMessage = response['message'];
-                    if (response.containsKey('address')) {
-                      address = response['address'].toString();
-                    }
                   });
                 },
                 keyboardType: TextInputType.number,
@@ -289,22 +287,34 @@ class _TopPageState extends State<TopPage> {
                 fontSize: 25,
               ),
             ),
-            Text(currentWeather.description ?? ""),
-            Text(currentWeather.temperature != null
-                ? '${currentWeather.temperature}°'
-                : ""),
+            Text(currentWeather == null
+                ? ""
+                : (currentWeather!.description ?? "")),
+            Text(
+                currentWeather == null
+                    ? "ー"
+                    : (currentWeather!.temperature != null
+                        ? '${currentWeather!.temperature}°'
+                        : ""),
+                style: const TextStyle(
+                  fontSize: 80,
+                )),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(currentWeather.temperatureMaximum != null
-                      ? '最高：${currentWeather.temperatureMaximum}°'
-                      : ""),
+                  child: Text(currentWeather == null
+                      ? "ー"
+                      : (currentWeather!.temperatureMaximum != null
+                          ? '最高：${currentWeather!.temperatureMaximum}°'
+                          : "")),
                 ),
-                Text(currentWeather.temperatureMinimum != null
-                    ? '最低：${currentWeather.temperatureMinimum}°'
-                    : ""),
+                Text(currentWeather == null
+                    ? "ー"
+                    : (currentWeather!.temperatureMinimum != null
+                        ? '最低：${currentWeather!.temperatureMinimum}°'
+                        : "")),
               ],
             ),
             const Padding(
@@ -316,7 +326,7 @@ class _TopPageState extends State<TopPage> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: houryWeather.map((weather) {
+                children: hourlyWeather.map((weather) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10.0, vertical: 8.0),
@@ -362,7 +372,7 @@ class _TopPageState extends State<TopPage> {
                             SizedBox(
                               child: Text(
                                   '${weekDay[weather.time!.weekday - 1]}曜日'),
-                              width: 100,
+                              width: 50,
                             ),
                             Row(
                               children: [
@@ -375,16 +385,16 @@ class _TopPageState extends State<TopPage> {
                               ],
                             ),
                             SizedBox(
-                              width: 100,
+                              width: 50,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('${weather.temperatureMaximum}',
+                                  Text('${weather.temperatureMaximum}°',
                                       style: const TextStyle(
                                         fontSize: 16,
                                       )),
-                                  Text('${weather.temperatureMinimum}',
+                                  Text('${weather.temperatureMinimum}°',
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.black.withOpacity(0.4),
