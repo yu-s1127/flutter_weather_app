@@ -18,6 +18,8 @@ class _TopPageState extends State<TopPage> {
     temperatureMinimum: 14,
   );
 
+  String address = 'ー';
+
   List<Weather> houryWeather = [
     Weather(
       temperature: 20,
@@ -255,9 +257,10 @@ class _TopPageState extends State<TopPage> {
               width: 200,
               child: TextField(
                 onSubmitted: (value) async {
-                  String address =
-                      await ZipCode.searchAddressFromZipCode(value);
-                  print(address);
+                  String result = await ZipCode.searchAddressFromZipCode(value);
+                  setState(() {
+                    address = result;
+                  });
                 },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
@@ -268,9 +271,9 @@ class _TopPageState extends State<TopPage> {
             const Padding(
               padding: EdgeInsets.only(top: 25),
             ),
-            const Text(
-              '大阪市',
-              style: TextStyle(
+            Text(
+              address,
+              style: const TextStyle(
                 fontSize: 25,
               ),
             ),
